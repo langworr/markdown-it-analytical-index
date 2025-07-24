@@ -44,7 +44,10 @@ Try to write sentences with some keywords in square bracket</textarea>
       function handleChange(e) {
         const text = window
           .markdownit({html: true})
-          .use(window.markdownitExample)
+          .use(window.markdownItAnalyticalIndex, {
+            title: "Ciccio",
+            headingLevel: 4
+          })
           .render(e.target.value)
         renderer.innerHTML = text
       }
