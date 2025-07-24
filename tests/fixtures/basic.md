@@ -1,13 +1,7 @@
-test 1
-.
-content
-.
-<p style="color:blue;">content</p>
-.
+# Esempio Markdown
 
-test 2
-.
-*other content*
-.
-<p style="color:blue;"><em>other content</em></p>
-.
+Nel testo compaiono i concetti [[Simmetria|Equilibrio visivo]] e [[Contrasto]].
+
+<!-- analytical-index -->
+
+Fine del documento.

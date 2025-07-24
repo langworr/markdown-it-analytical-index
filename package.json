@@ -1,7 +1,7 @@
 {
   "name": "markdown-it-analytical-index",
   "version": "0.0.1",
-  "description": "Create automaticaly an analytical inde based on the square brackest",
+  "description": "Create automaticaly an analytical index based on the square brackets in Markdown",
   "author": "Roberto Donaglia",
   "homepage": "https://github.com/langworr/markdown-it-analytical-index",
   "license": "MIT",
@@ -18,13 +18,14 @@
   "types": "dist/types/index.d.ts",
   "files": [
     "src",
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "exports": {
     ".": {
       "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js",
-      "style": "./dist/css/style.min.css"
+      "import": "./dist/esm/index.js"
     }
   },
   "scripts": {

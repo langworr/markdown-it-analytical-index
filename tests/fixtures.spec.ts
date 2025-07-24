@@ -1,27 +1,27 @@
-/* eslint-disable jest/valid-title */
 import fs from "fs"
+import path from "path"
 import MarkdownIt from "markdown-it"
-import example_plugin from "../src"
+import plugin from "../src/index"
 
-/** Read a "fixtures" file, containing a set of tests:
- *
- * test name
- * .
- * input text
- * .
- * expected output
- * .
- *
- * */
-function readFixtures(name: string): string[][] {
-  const fixtures = fs.readFileSync(`tests/fixtures/${name}.md`).toString()
-  return fixtures.split("\n.\n\n").map(s => s.split("\n.\n"))
-}
+describe("markdown-it-analytical-index — fixture rendering", () => {
+  const fixturePath = path.join(__dirname, "fixtures", "basic.md")
+  const inputMarkdown = fs.readFileSync(fixturePath, "utf-8")
 
-describe("Parses basic", () => {
-  readFixtures("basic").forEach(([name, text, expected]) => {
-    const mdit = MarkdownIt().use(example_plugin)
-    const rendered = mdit.render(text)
-    it(name, () => expect(rendered).toEqual(`${expected}\n`))
+  it("renders analytical index from markdown fixture", () => {
+    const md = MarkdownIt({ html: true }).use(plugin, {
+      title: "Concetti chiave",
+      headingLevel: 3
+    })
+
+    const output = md.render(inputMarkdown)
+
+    // Verifiche chiave
+    expect(output).toContain('<span id="simmetria-1" title="Equilibrio visivo">Simmetria</span>')
+    expect(output).toContain('<span id="contrasto-1">Contrasto</span>')
+    expect(output).toContain('<h3>Concetti chiave</h3>')
+    expect(output).toContain('<strong>Simmetria</strong>')
+    expect(output).toContain('<strong>Contrasto</strong>')
+    expect(output).toContain('<a href="#simmetria-1">1</a>')
+    expect(output).toContain('<a href="#contrasto-1">1</a>')
   })
 })
