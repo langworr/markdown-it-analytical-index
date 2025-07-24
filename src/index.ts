@@ -59,21 +59,22 @@ function buildRule(title: string, headingLevel: number) {
       }
     }
 
-    // Solo se l'indice ha voci
-    if (Object.keys(indexMap).length > 0) {
+    const placeholderIndex = state.tokens.findIndex((t: Token) =>
+      t.type === "html_block" && t.content.includes("<!-- analytical-index -->")
+    )
+
+    if (Object.keys(indexMap).length > 0 && placeholderIndex >= 0) {
       const headingTag = `h${headingLevel}`
-      const indexLines = [`<${headingTag}>${escapeHtml(title)}</${headingTag}>`]
+      const titleText = escapeHtml(title)
+      const indexLines = [`<${headingTag}>${titleText}</${headingTag}>`]
 
       for (const [keyword, ids] of Object.entries(indexMap)) {
         const links = ids.map((id, i) => `<a href="#${id}">${i + 1}</a>`).join(", ")
         indexLines.push(`<p><strong>${capitalize(keyword)}</strong> → ${links}</p>`)
       }
 
-      const indexToken = new state.Token("html_block", "", 0)
-      indexToken.content = indexLines.join("\n")
-      state.tokens.push(indexToken)
+      state.tokens[placeholderIndex].content = indexLines.join("\n")
     }
-
     return true
   }
 }
