@@ -1,22 +1,19 @@
 import type MarkdownIt from "markdown-it"
 import type Token from "markdown-it/lib/token"
+import type CoreState from "markdown-it/lib/rules_core/state_core"
+import type { PluginOptions } from "./types"
 
-interface PluginOptions {
-  title?: string
-  headingLevel?: number
-}
-
-export default function analyticalIndexPlugin(md: MarkdownIt, options: PluginOptions = {}): void {
-  const {
-    title = "Indice analitico",
-    headingLevel = 2
-  } = options
+export default function analyticalIndexPlugin(
+  md: MarkdownIt,
+  options: PluginOptions = {}
+): void {
+  const { title = "Indice analitico", headingLevel = 2 } = options
 
   md.core.ruler.push("analytical_index", buildRule(title, headingLevel))
 }
 
 function buildRule(title: string, headingLevel: number) {
-  return function analyticalIndexRule(state: any): boolean {
+  return function analyticalIndexRule(state: CoreState): boolean {
     const indexMap: Record<string, string[]> = {}
     const counterMap: Record<string, number> = {}
 
@@ -28,7 +25,7 @@ function buildRule(title: string, headingLevel: number) {
           if (child.type === "text" && child.content.includes("[[")) {
             const segments = child.content.split(/(\[\[[^\]]+\]\])/g)
             for (const segment of segments) {
-              const match = segment.match(/^\[\[([^\[\]]+?)\]\]$/)
+              const match = segment.match(/^\[\[([^[\]]+?)\]\]$/)
               if (match) {
                 const raw = match[1].trim()
                 const [label, tooltip] = raw.split("|").map((s: string) => s.trim())
@@ -40,7 +37,9 @@ function buildRule(title: string, headingLevel: number) {
 
                 const htmlToken = new state.Token("html_inline", "", 0)
                 htmlToken.content = tooltip
-                  ? `<span id="${anchorId}" title="${escapeHtml(tooltip)}">${label}</span>`
+                  ? `<span id="${anchorId}" title="${escapeHtml(
+                      tooltip
+                    )}">${label}</span>`
                   : `<span id="${anchorId}">${label}</span>`
 
                 newChildren.push(htmlToken)
@@ -59,8 +58,9 @@ function buildRule(title: string, headingLevel: number) {
       }
     }
 
-    const placeholderIndex = state.tokens.findIndex((t: Token) =>
-      t.type === "html_block" && t.content.includes("<!-- analytical-index -->")
+    const placeholderIndex = state.tokens.findIndex(
+      (t: Token) =>
+        t.type === "html_block" && t.content.includes("<!-- analytical-index -->")
     )
 
     if (Object.keys(indexMap).length > 0 && placeholderIndex >= 0) {
@@ -80,10 +80,11 @@ function buildRule(title: string, headingLevel: number) {
 }
 
 function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;")
-          .replace(/"/g, "&quot;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
 }
 
 function capitalize(str: string): string {

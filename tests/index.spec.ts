@@ -1,7 +1,8 @@
 import MarkdownIt from "markdown-it"
 import plugin from "../src/index"
+import type { PluginOptions } from "../src/types"
 
-function render(mdContent: string, options?: any): string {
+function render(mdContent: string, options?: PluginOptions): string {
   const md = MarkdownIt({ html: true }).use(plugin, options)
   return md.render(mdContent)
 }
@@ -10,14 +11,18 @@ describe("markdown-it-analytical-index", () => {
   it("renders span with id for [[Termine]]", () => {
     const html = render("[[Simmetria]]\n\n<!-- analytical-index -->")
     expect(html).toContain('<span id="simmetria-1">Simmetria</span>')
-    expect(html).toContain('<strong>Simmetria</strong>')
+    expect(html).toContain("<strong>Simmetria</strong>")
     expect(html).toContain('<a href="#simmetria-1">1</a>')
   })
 
   it("renders span with tooltip for [[Termine|Tooltip]]", () => {
-    const html = render("[[Contrasto|Differenza cromatica]]\n\n<!-- analytical-index -->")
+    const html = render(
+      "[[Contrasto|Differenza cromatica]]\n\n<!-- analytical-index -->"
+    )
     expect(html).toContain('title="Differenza cromatica"')
-    expect(html).toContain('<span id="contrasto-1" title="Differenza cromatica">Contrasto</span>')
+    expect(html).toContain(
+      '<span id="contrasto-1" title="Differenza cromatica">Contrasto</span>'
+    )
   })
 
   it("does not generate index without placeholder", () => {
@@ -32,7 +37,7 @@ describe("markdown-it-analytical-index", () => {
       headingLevel: 4
     })
     expect(html).toContain("<h4>Concetti</h4>")
-    expect(html).toContain('<strong>Simmetria</strong>')
+    expect(html).toContain("<strong>Simmetria</strong>")
   })
 
   it("handles multiple occurrences of same term", () => {
