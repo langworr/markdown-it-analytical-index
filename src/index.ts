@@ -1,38 +1,49 @@
-import type MarkdownIt from "markdown-it/lib"
-import type StateCore from "markdown-it/lib/rules_core/state_core"
+import type MarkdownIt from "markdown-it"
+import type Token from "markdown-it/lib/token"
 
-/**
- * This plugin will create an analytical index at the end of the document.
- * You can select the keywords to include with the double square brackets [[]]
- */
 export default function analyticalIndexPlugin(md: MarkdownIt): void {
-  md.core.ruler.push("analytical_index", analyticalIndexRule)
+  md.core.ruler.push("concept_index", analyticalIndexRule)
 }
 
-function analyticalIndexRule(state: StateCore): boolean {
+function analyticalIndexRule(state: any): boolean {
   const indexMap: Record<string, string[]> = {}
   const counterMap: Record<string, number> = {}
 
   for (const token of state.tokens) {
     if (token.type === "inline" && token.children) {
+      const newChildren: Token[] = []
+
       for (const child of token.children) {
         if (child.type === "text" && child.content.includes("[[")) {
-          const matches = [...child.content.matchAll(/\[\[([^\]]+)\]\]/g)];
-          for (const match of matches) {
-            const keyword = match[1].trim()
-            const key = keyword.toLowerCase()
-            counterMap[key] = (counterMap[key] || 0) + 1
-            const anchorId = `${key}-${counterMap[key]}`
-            indexMap[key] = indexMap[key] || []
-            indexMap[key].push(anchorId)
+          const segments = child.content.split(/(\[\[[^\]]+\]\])/g)
+          for (const segment of segments) {
+            const match = segment.match(/^\[\[([^\[\]]+?)\]\]$/)
+            if (match) {
+              const raw = match[1].trim()
+              const [label, tooltip] = raw.split("|").map((s: string) => s.trim())
+              const key = label.toLowerCase()
+              counterMap[key] = (counterMap[key] || 0) + 1
+              const anchorId = `${key}-${counterMap[key]}`
+              indexMap[key] = indexMap[key] || []
+              indexMap[key].push(anchorId)
 
-            child.content = child.content.replace(
-              `[[${keyword}]]`,
-              `<span id="${anchorId}">${keyword}</span>`
-            )
+              const htmlToken = new state.Token("html_inline", "", 0)
+              htmlToken.content = tooltip
+                ? `<span id="${anchorId}" title="${escapeHtml(tooltip)}">${label}</span>`
+                : `<span id="${anchorId}">${label}</span>`
+              newChildren.push(htmlToken)
+            } else {
+              const textToken = new state.Token("text", "", 0)
+              textToken.content = segment
+              newChildren.push(textToken)
+            }
           }
+        } else {
+          newChildren.push(child)
         }
       }
+
+      token.children = newChildren
     }
   }
 
@@ -42,11 +53,30 @@ function analyticalIndexRule(state: StateCore): boolean {
     indexLines.push(`<p><strong>${capitalize(keyword)}</strong> → ${links}</p>`)
   }
 
+//  const indexToken = new state.Token("html_block", "", 0)
+//  indexToken.content = indexLines.join("\n")
+//  state.tokens.push(indexToken)
+  if (Object.keys(indexMap).length > 0) {
+    const indexLines = ["<h2>Indice analitico</h2>"]
+    for (const [keyword, ids] of Object.entries(indexMap)) {
+      const links = ids.map((id, i) => `<a href="#${id}">${i + 1}</a>`).join(", ")
+      indexLines.push(`<p><strong>${capitalize(keyword)}</strong> → ${links}</p>`)
+    }
+
   const indexToken = new state.Token("html_block", "", 0)
   indexToken.content = indexLines.join("\n")
   state.tokens.push(indexToken)
+}
+
 
   return true
+}
+
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, "&amp;")
+             .replace(/"/g, "&quot;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
 }
 
 function capitalize(str: string): string {
