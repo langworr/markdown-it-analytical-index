@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-analytical-index",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Create automaticaly an analytical index based on the square brackets in Markdown",
   "author": "Roberto Donaglia",
   "homepage": "https://github.com/langworr/markdown-it-analytical-index",
