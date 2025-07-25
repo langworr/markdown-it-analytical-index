@@ -1,19 +1,36 @@
 import type MarkdownIt from "markdown-it"
+import type { PluginSimple } from "markdown-it"
 import type Token from "markdown-it/lib/token"
-import type CoreState from "markdown-it/lib/rules_core/state_core"
+import type StateCore from "markdown-it/lib/rules_core/state_core"
 import type { PluginOptions } from "./types"
 
-export default function analyticalIndexPlugin(
+interface AnalyticalIndexPlugin extends PluginSimple {
+  pluginName?: string
+}
+
+/**
+ * It makes an analytic index based on the the double square brackets tag.
+ *
+ * @param md instance of Markdown to extend
+ * @param options.title text to use as title f the index
+ * @param options.headingLevel heading level
+ */
+
+const analyticalIndexPlugin: AnalyticalIndexPlugin = (
   md: MarkdownIt,
   options: PluginOptions = {}
-): void {
+): void => {
   const { title = "Indice analitico", headingLevel = 2 } = options
-
   md.core.ruler.push("analytical_index", buildRule(title, headingLevel))
 }
 
+//Official name of the plugin
+analyticalIndexPlugin.pluginName = "markdown-it-analytic-index"
+
+export default analyticalIndexPlugin
+
 function buildRule(title: string, headingLevel: number) {
-  return function analyticalIndexRule(state: CoreState): boolean {
+  return function analyticalIndexRule(state: StateCore): boolean {
     const indexMap: Record<string, string[]> = {}
     const counterMap: Record<string, number> = {}
 
