@@ -55,13 +55,8 @@ const md = new MarkdownIt({ html: true })
   .use(analyticalIndex, {
     title: "Key Concepts",     // Optional custom title
     headingLevel: 3,           // Optional heading level (defaults to h2)
-    sortOrder: "alphabetical", // Optional sort order. "occurrence" | "alphabetical"
+    sortOrder: "alphabetical" // Optional sort order. "occurrence" | "alphabetical"
                                //  default is "alphabetical" 
-    renderIndex: entries =>{   // callback custom for the rendering
-      return `<ol>${entries
-        .map(e => `<li><a href="#${e.anchor}">${e.title}</a></li>`)
-        .join("")}</ol>`;
-    }
   })
 
 const input = `
@@ -93,7 +88,6 @@ Pass an object when registering the plugin to customize output:
 | `title`        | string   | `"Analytical Index"` | The heading above the index block                             |
 | `headingLevel` | number   | `2`                | HTML heading level for the index title (e.g. `h2`, `h3`)       |
 | `sortOrder` | `"occurrence" \| "alphabetical"` | `"alphabetical"` | Order the terms by occurrence number or alphabetically |
-| `renderIndex` | `(entries: IndexEntry[]) => string` | *internal defaultRender* | The callback function receives the terms and returns custom HTML/Markdown |
 
 ---
 
@@ -119,73 +113,6 @@ The plugin will render HTML similar to:
 ```
 
 Each term receives a unique anchor and is listed with clickable references in the index.
-
-If you need a deeper custumization, you can call it as you can see in the example below.
-
-```html
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Demo Custom Render</title>
-  <!-- Stili CSS for a custom-index -->
-  <style>
-    .custom-index {
-      border: 2px solid #4CAF50;
-      padding: 16px;
-      margin-top: 24px;
-      background: #f9fff9;
-    }
-    .ci-item {
-      margin-bottom: 8px;
-    }
-    .ci-term {
-      font-weight: bold;
-      color: #388E3C;
-    }
-    .ci-count {
-      color: #555;
-    }
-  </style>
-</head>
-<body>
-  <div id="content"></div>
-
-  <!-- Markdown-It and markdown-it-analytical-index plugin scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/markdown-it-analytical-index/dist/markdown-it-analytical-index.min.js"></script>
-  <script>
-    // Initialize Markdown-It whith the plugin and the custom render.
-    const md = window.markdownit({ html: true }).use(window.markdownitAnalyticalIndex, {
-      renderIndex: entries => {
-        const items = entries.map(e => {
-          return `
-            <div class="ci-item">
-              <span class="ci-term">${e.title}</span>
-              <span class="ci-count">— ${e.occurrences}</span>
-            </div>
-          `;
-        }).join("");
-        return `<div class="custom-index">${items}</div>`;
-      }
-    });
-
-    // Markdown di esempio
-    const source = `
-# Titolo nella pagina
-
-Introduciamo [[Concetto]] e di nuovo [[Concetto]].
-
-<!-- analytical-index -->
-`;
-
-    // Render e inserimento nel DOM
-    document.getElementById("content").innerHTML = md.render(source);
-  </script>
-</body>
-</html>
-```
-
-TODO: an output render
 
 ---
 

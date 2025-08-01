@@ -10,14 +10,10 @@ export default function analyticalIndexPlugin(
   const {
     title = "Indice analitico",
     headingLevel = 2,
-    sortOrder = "alphabetical",
-    renderIndex
+    sortOrder = "alphabetical"
   } = options
 
-  md.core.ruler.push(
-    "analytical_index",
-    buildRule({ title, headingLevel, renderIndex, sortOrder })
-  )
+  md.core.ruler.push("analytical_index", buildRule({ title, headingLevel, sortOrder }))
 }
 
 function buildRule(opts: AnalyticalIndexOptions) {
@@ -96,9 +92,7 @@ function buildRule(opts: AnalyticalIndexOptions) {
     )
 
     if (terms.length > 0 && placeholderIndex >= 0) {
-      const output = opts.renderIndex
-        ? opts.renderIndex(terms, opts)
-        : defaultRenderer(terms, opts)
+      const output = defaultRenderer(terms, opts)
 
       state.tokens[placeholderIndex].content = output
     }

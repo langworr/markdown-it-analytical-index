@@ -2,7 +2,6 @@ export interface AnalyticalIndexOptions {
   title?: string
   headingLevel?: number
   sortOrder?: "occurrence" | "alphabetical"
-  renderIndex?: (terms: Term[], opts: AnalyticalIndexOptions) => string
 }
 
 export interface Term {
