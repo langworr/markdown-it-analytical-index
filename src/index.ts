@@ -1,91 +1,134 @@
 import type MarkdownIt from "markdown-it"
 import type Token from "markdown-it/lib/token"
+import StateCore from "markdown-it/lib/rules_core/state_core"
+import type { AnalyticalIndexOptions, Term } from "./index.d"
 
-interface PluginOptions {
-  title?: string
-  headingLevel?: number
-}
-
-export default function analyticalIndexPlugin(md: MarkdownIt, options: PluginOptions = {}): void {
+export default function analyticalIndexPlugin(
+  md: MarkdownIt,
+  options: AnalyticalIndexOptions = {}
+): void {
   const {
     title = "Indice analitico",
-    headingLevel = 2
+    headingLevel = 2,
+    sortOrder = "alphabetical",
+    renderIndex
   } = options
 
-  md.core.ruler.push("analytical_index", buildRule(title, headingLevel))
+  md.core.ruler.push(
+    "analytical_index",
+    buildRule({ title, headingLevel, renderIndex, sortOrder })
+  )
 }
 
-function buildRule(title: string, headingLevel: number) {
-  return function analyticalIndexRule(state: any): boolean {
-    const indexMap: Record<string, string[]> = {}
-    const counterMap: Record<string, number> = {}
+function buildRule(opts: AnalyticalIndexOptions) {
+  return function analyticalIndexRule(state: StateCore): boolean {
+    const termsMap: Record<string, Term> = {}
 
-    for (const token of state.tokens) {
+    // 1) Estrai i termini [[term|tooltip]] e rigenera i token inline
+    state.tokens.forEach((token: Token) => {
       if (token.type === "inline" && token.children) {
         const newChildren: Token[] = []
 
-        for (const child of token.children) {
+        token.children.forEach(child => {
           if (child.type === "text" && child.content.includes("[[")) {
             const segments = child.content.split(/(\[\[[^\]]+\]\])/g)
-            for (const segment of segments) {
-              const match = segment.match(/^\[\[([^\[\]]+?)\]\]$/)
+            segments.forEach(segment => {
+              const match = segment.match(/^\[\[([^|\]]+)(?:\|([^\]]+))?\]\]$/)
               if (match) {
-                const raw = match[1].trim()
-                const [label, tooltip] = raw.split("|").map((s: string) => s.trim())
+                const label = match[1].trim()
+                const tooltip = match[2]?.trim()
                 const key = label.toLowerCase()
-                counterMap[key] = (counterMap[key] || 0) + 1
-                const anchorId = `${key}-${counterMap[key]}`
-                indexMap[key] = indexMap[key] || []
-                indexMap[key].push(anchorId)
+                const slug = key.replace(/\s+/g, "-")
 
-                const htmlToken = new state.Token("html_inline", "", 0)
-                htmlToken.content = tooltip
-                  ? `<span id="${anchorId}" title="${escapeHtml(tooltip)}">${label}</span>`
+                // Costruisci o aggiorna il Term
+                const term = termsMap[key] || {
+                  text: label,
+                  slug,
+                  occurrences: 0,
+                  locations: []
+                }
+                term.occurrences++
+                term.locations.push({
+                  contextText: label,
+                  depth: 0,
+                  contextSlug: ""
+                })
+                termsMap[key] = term
+
+                // Genera lo span con id univoco
+                const anchorId = `${slug}-${term.occurrences}`
+                const htmlContent = tooltip
+                  ? `<span id="${anchorId}" title="${escapeHtml(
+                      tooltip
+                    )}">${label}</span>`
                   : `<span id="${anchorId}">${label}</span>`
 
+                const htmlToken = new state.Token("html_inline", "", 0)
+                htmlToken.content = htmlContent
                 newChildren.push(htmlToken)
               } else {
                 const textToken = new state.Token("text", "", 0)
                 textToken.content = segment
                 newChildren.push(textToken)
               }
-            }
+            })
           } else {
             newChildren.push(child)
           }
-        }
+        })
 
         token.children = newChildren
       }
+    })
+
+    // 2) Applica filter e sort
+    const terms = Object.values(termsMap)
+    if (opts.sortOrder === "alphabetical") {
+      terms.sort((a, b) => a.text.localeCompare(b.text))
+    } else {
+      terms.sort((a, b) => b.occurrences - a.occurrences)
     }
 
-    const placeholderIndex = state.tokens.findIndex((t: Token) =>
-      t.type === "html_block" && t.content.includes("<!-- analytical-index -->")
+    // 3) Cerca il placeholder e inietta l’indice
+    const placeholderIndex = state.tokens.findIndex(
+      (t: Token) =>
+        t.type === "html_block" && t.content.includes("<!-- analytical-index -->")
     )
 
-    if (Object.keys(indexMap).length > 0 && placeholderIndex >= 0) {
-      const headingTag = `h${headingLevel}`
-      const titleText = escapeHtml(title)
-      const indexLines = [`<${headingTag}>${titleText}</${headingTag}>`]
+    if (terms.length > 0 && placeholderIndex >= 0) {
+      const output = opts.renderIndex
+        ? opts.renderIndex(terms, opts)
+        : defaultRenderer(terms, opts)
 
-      for (const [keyword, ids] of Object.entries(indexMap)) {
-        const links = ids.map((id, i) => `<a href="#${id}">${i + 1}</a>`).join(", ")
-        indexLines.push(`<p><strong>${capitalize(keyword)}</strong> → ${links}</p>`)
-      }
-
-      state.tokens[placeholderIndex].content = indexLines.join("\n")
+      state.tokens[placeholderIndex].content = output
     }
+
     return true
   }
 }
 
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;")
-          .replace(/"/g, "&quot;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
+function defaultRenderer(
+  terms: Term[],
+  opts: Pick<AnalyticalIndexOptions, "title" | "headingLevel">
+): string {
+  const headingTag = `h${opts.headingLevel}`
+  const titleEscaped = escapeHtml(opts.title || "")
+  const lines = [`<${headingTag}>${titleEscaped}</${headingTag}>`]
+
+  terms.forEach(term => {
+    const links = term.locations
+      .map((_, i) => `<a href="#${term.slug}-${i + 1}">${i + 1}</a>`)
+      .join(", ")
+    lines.push(`<p><strong>${escapeHtml(term.text)}</strong> → ${links}</p>`)
+  })
+
+  return lines.join("\n")
 }
 
-function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1)
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
 }
