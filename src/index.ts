@@ -113,7 +113,9 @@ function defaultRenderer(
     const links = term.locations
       .map((_, i) => `<a href="#${term.slug}-${i + 1}">${i + 1}</a>`)
       .join(", ")
-    lines.push(`<p><strong>${escapeHtml(term.text)}</strong> → ${links}</p>`)
+    lines.push(
+      `<p><strong>${escapeHtml(capitalize(term.text))}</strong> → ${links}</p>`
+    )
   })
 
   return lines.join("\n")
@@ -125,4 +127,8 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
+}
+
+function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
