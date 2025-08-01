@@ -34,27 +34,6 @@ const md = new MarkdownIt({ html: true })
   .use(analyticalIndex, {
     title: "Key Concepts",     // Optional custom title
     headingLevel: 3,           // Optional heading level (defaults to h2)
-  })
-
-const input = `
-This sentence contains [[Simmetry|Visual balance]] and also [[Contrast]].
-
-<!-- analytical-index -->
-`
-
-const output = md.render(input)
-```
-
-## Extended Usage
-
-```js
-const MarkdownIt = require("markdown-it")
-const analyticalIndex = require("markdown-it-analytical-index")
-
-const md = new MarkdownIt({ html: true })
-  .use(analyticalIndex, {
-    title: "Key Concepts",     // Optional custom title
-    headingLevel: 3,           // Optional heading level (defaults to h2)
     sortOrder: "alphabetical" // Optional sort order. "occurrence" | "alphabetical"
                                //  default is "alphabetical" 
   })
@@ -67,6 +46,7 @@ This sentence contains [[Simmetry|Visual balance]] and also [[Contrast]].
 
 const output = md.render(input)
 ```
+
 ---
 
 ## Supported Syntax
