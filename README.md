@@ -1,5 +1,13 @@
 # markdown-it-analytical-index
 
+# markdown-it-analytical-index
+
+[![npm version](https://img.shields.io/npm/v/markdown-it-analytical-index.svg)](https://www.npmjs.com/package/markdown-it-analytical-index)
+[![Downloads/month](https://img.shields.io/npm/dm/markdown-it-analytical-index.svg)](https://www.npmjs.com/package/markdown-it-analytical-index)
+[![License](https://img.shields.io/npm/l/markdown-it-analytical-index.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/typed-TypeScript-blue.svg)](https://www.typescriptlang.org/)
+
+
 A plugin for [markdown-it](https://github.com/markdown-it/markdown-it) that generates a semantic analytical index based on specially marked terms within the Markdown text.
 
 The plugin detects double-bracketed concepts like `[[Term]]` or `[[Term|Tooltip]]`, wraps them in HTML tags with unique anchors, and creates a list of references at a designated placeholder location using `<!-- analytical-index -->`.
@@ -25,7 +33,9 @@ const analyticalIndex = require("markdown-it-analytical-index")
 const md = new MarkdownIt({ html: true })
   .use(analyticalIndex, {
     title: "Key Concepts",     // Optional custom title
-    headingLevel: 3            // Optional heading level (defaults to h2)
+    headingLevel: 3,           // Optional heading level (defaults to h2)
+    sortOrder: "alphabetical" // Optional sort order. "occurrence" | "alphabetical"
+                               //  default is "alphabetical" 
   })
 
 const input = `
@@ -57,6 +67,7 @@ Pass an object when registering the plugin to customize output:
 |----------------|----------|--------------------|----------------------------------------------------------------|
 | `title`        | string   | `"Analytical Index"` | The heading above the index block                             |
 | `headingLevel` | number   | `2`                | HTML heading level for the index title (e.g. `h2`, `h3`)       |
+| `sortOrder` | `"occurrence" \| "alphabetical"` | `"alphabetical"` | Order the terms by occurrence number or alphabetically |
 
 ---
 
