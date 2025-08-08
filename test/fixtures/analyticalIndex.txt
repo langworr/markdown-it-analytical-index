@@ -1,0 +1,10 @@
+
+Analytical Index plugin test
+
+.
+!![symmetry] and !![contrast] are indexed terms. And this is another !![symmetry] description.
+This tag !![A should not be rendered neigther !!^[ this . And this !![] should be too short.
+Bye bye!!
+.
+<span id="symmetry-0">symmetry</span> and <span id="contrast-1">contrast</span> are indexed terms. And this is another <span id="symmetry-1">symmetry</span> description.
+.

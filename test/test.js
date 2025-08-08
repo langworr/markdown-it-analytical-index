@@ -30,7 +30,7 @@ function generate (fixturePath, md, env) {
 }
 
 describe('analyticalIndex.txt', function () {
-  const md = markdownit({ linkify: true }).use(footnote)
+  const md = markdownit().use(analyticalIndex)
 
   // Check that defaults work correctly
   generate(fileURLToPath(new URL('fixtures/analyticalIndex.txt', import.meta.url)), md)

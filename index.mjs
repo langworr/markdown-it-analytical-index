@@ -10,9 +10,6 @@ function render_anaind_index(tokens, idx, options, env, slf) {
 // Similar to:
 // <span id="pippo-1">pippo</span>
 function render_anaind_anchor(tokens, idx, options, env, slf) {
-  const n = tokens[idx].attrIndex('id')
-  if (n < 0) return ''
-
   let prefix = ''
   if (typeof env.docId === 'string') prefix = `-${env.docId}-`
 
