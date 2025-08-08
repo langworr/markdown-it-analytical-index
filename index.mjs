@@ -19,11 +19,11 @@ function render_anaind_anchor(tokens, idx, options, env, slf) {
   return '<span id="' + prefix + tokens[idx].attrs[n][1] + '">' + tokens[idx].content + '</span>'
 }
 
-export default function analyticalIndexPlugin (md, options) {
+export default function analyticalIndex (md, options) {
   options = options || {}
   const marker  = options.marker || '!!'
-  md.renderer.ruler.anaind_a = render_anaind_anchor
-  md.renderer.ruler.anaind_i = render_anaind_index
+  md.renderer.rules.anaind_a = render_anaind_anchor
+  md.renderer.rules.anaind_i = render_anaind_index
 
   // Process the anchor tags
   function anchorRule(state, silent) {
@@ -76,6 +76,7 @@ export default function analyticalIndexPlugin (md, options) {
     const token = state.push('anaind_a', 'span', 0)
     // token.attrs = [['id', `${term}-${termId}`]] BOB
     token.attrs = [['id', `${term}-${state.env.anaind[term]}`]]
+    token.content = term
 
     state.pos = labelEnd + 1
     state.posMax = max
