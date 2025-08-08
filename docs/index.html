@@ -47,7 +47,7 @@ Try to write sentences with some keywords in square bracket, e.g. !![symmetry] o
       function handleChange(e) {
         const text = window
           .markdownit({ html: true })
-          .use(window.markdownItAnalyticalIndex, {
+          .use(window.markdownitAnalyticalIndex, {
             title: "Index - Analytical",
             headingLevel: 4,
             sortOrder: "alphabetical"

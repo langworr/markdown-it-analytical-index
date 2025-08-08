@@ -20,6 +20,8 @@ function render_anaind_anchor(tokens, idx, options, env, slf) {
 }
 
 export default function analyticalIndex (md, options) {
+  const parseLinkLabel = md.helpers.parseLinkLabel
+
   options = options || {}
   const marker  = options.marker || '!!'
   md.renderer.rules.anaind_a = render_anaind_anchor
@@ -38,7 +40,7 @@ export default function analyticalIndex (md, options) {
     if (state.src.charCodeAt(start + marker.length ) !== 0x5B/* [ */) return false
 
     const labelStart = start + marker.length + 1
-    const labelEnd = parseLinkLabel(state, labelStart)
+    const labelEnd = parseLinkLabel(state, start + marker.length)
     if (labelEnd < 0) return false
     
     // Check if the term is not empty.
@@ -85,7 +87,8 @@ export default function analyticalIndex (md, options) {
 
   // Process the analytical index tag.
   function analyticalIndexRule(state, silent) {
-    return true
+    // false to avoid infinite loop
+    return false
   }
 
   md.inline.ruler.push('anaind_a', anchorRule);
