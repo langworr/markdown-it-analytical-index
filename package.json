@@ -1,0 +1,40 @@
+{
+  "name": "markdown-it-analytical-index",
+  "version": "0.0.1",
+  "description": "Create automaticaly an analytical index in Markdown documents using markdown-it.",
+  "homepage": "https://github.com/langworr/markdown-it-analytical-index",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "markdown-it-testgen test/*.md --output test/*.json",
+    "test:watch": "markdown-it-testgen test/*.md --output test/*.json --watch",
+    "test:run": "markdown-it-testgen test/*.json --output test/*.md",
+    "test:run:watch": "markdown-it-testgen test/*.json --output test/*.md --watch",
+    "build": "rollup -c",
+    "test:manual": "node ./test/test.js"
+  },
+  "keywords": [
+    "markdown",
+    "markdown-it",
+    "plugin",
+    "analytical-index",
+    "index"
+  ],
+  "author": "Roberto Donaglia",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@eslint/markdown": "^7.1.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "eslint": "^9.32.0",
+    "globals": "^16.3.0"
+  },
+  "dependencies": {
+    "markdown-it": "^12.3.2",
+    "markdown-it-testgen": "^0.1.6",
+    "rollup": "^4.46.2"
+  }
+}
