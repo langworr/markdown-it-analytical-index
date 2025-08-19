@@ -1,9 +1,38 @@
+// Capitalize the first letter of a string.
+function capitalize(str) {  
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 // Rendering function of the analytical index.
 // Similar to:
 // <h2>Indice analitico</h2>
 // <p><strong>Pippo</strong> → <a href="#pippo-1">1</a></p>
 function render_anaind_index(tokens, idx, options, env, slf) {
-  return true
+  const columns = parseInt(tokens[idx].meta.parameters.columns, 10)
+  let string = '<h' + tokens[idx].meta.parameters.headingLevel + '>' +
+    tokens[idx].meta.parameters.title + '</h' + tokens[idx].meta.parameters.headingLevel + '>\n'
+  if (columns > '1') {
+    string += '<p style="column-count: ' + columns +'; column-gap: 20px;">'
+  } else {
+    string += '<p>'
+  }
+  
+  if (!env.anaind) return string + '</p>'
+
+  if (tokens[idx].meta.parameters.sortOrder === 'alphabetical') {
+    Object.entries(env.anaind)
+      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // confronto alfabetico
+      .forEach(([key, value]) => {
+        string += '<strong>' + capitalize(key) + '</strong> → <a href="#' + key + '-' + value + '">' + value + '</a><br>'
+      })
+  } else if (tokens[idx].meta.parameters.sortOrder === 'frequency') {
+    Object.entries(env.anaind)
+      .sort(([, keyA], [, keyB]) => keyB - keyA) // confronto numerico
+      .forEach(([key, value]) => {
+        string += '<strong>' + capitalize(key) + '</strong> → <a href="#' + key + '-' + value + '">' + value + '</a><br>'
+      })
+  }
+
+  return string + '</p>'
 }
 
 // Rendering of the anchor for each term.
@@ -13,7 +42,7 @@ function render_anaind_anchor(tokens, idx, options, env, slf) {
   let prefix = ''
   if (typeof env.docId === 'string') prefix = `-${env.docId}-`
 
-  return '<span id="' + prefix + tokens[idx].attrs[n][1] + '">' + tokens[idx].content + '</span>'
+  return '<span id="' + prefix + tokens[idx].attrs[0][1] + '">' + tokens[idx].content + '</span>'
 }
 
 export default function analyticalIndex (md, options) {
@@ -21,6 +50,11 @@ export default function analyticalIndex (md, options) {
 
   options = options || {}
   const marker  = options.marker || '!!'
+  const indexMarkerStart = '<!-- @analytical-index '
+  const indexMarkerEnd = '-->'
+  const parameters = { title: "Analytical index", headingLevel: "2", sortOrder: "alphabetical", columns: "1" }
+  const sortOrders = ['alphabetical', 'frequency']
+  const regex = /(\w+):"([^"]*)"/g;
   md.renderer.rules.anaind_a = render_anaind_anchor
   md.renderer.rules.anaind_i = render_anaind_index
 
@@ -62,18 +96,8 @@ export default function analyticalIndex (md, options) {
     // If it does, increment the term ID, otherwise set it to 0.
     if (!(term in state.env.anaind)) state.env.anaind[term] = 0
     else state.env.anaind[term] += 1
-    // BOB
-    // if (!(term in state.env.anaind)) {
-    //   state.env.anaind[term] = [0]
-    //   termId = 0
-    // }
-    // else {
-    //   termId = state.env.anaind[term][state.env.anaind[term].length - 1] + 1
-    //   state.env.anaind[term].push(termId)
-    // }
 
     const token = state.push('anaind_a', 'span', 0)
-    // token.attrs = [['id', `${term}-${termId}`]] BOB
     token.attrs = [['id', `${term}-${state.env.anaind[term]}`]]
     token.content = term
 
@@ -83,11 +107,44 @@ export default function analyticalIndex (md, options) {
   }
 
   // Process the analytical index tag.
-  function analyticalIndexRule(state, silent) {
-    // false to avoid infinite loop
+  function analyticalIndexRule(state, startLine, endLine, silent) {
+    const start = state.bMarks[startLine] + state.tShift[startLine]
+    const max = state.eMarks[startLine]
+
+    // The line must start and end with the analytical index marker.
+    if (state.src.slice(start, start + indexMarkerStart.length) !== indexMarkerStart ||
+        state.src.slice(max - indexMarkerEnd.length, max) !== indexMarkerEnd) {
+      return false
+    }
+    // If silent, we only check if the analytical index marker is present.
+    if (silent) return true
+
+    const pars = state.src.slice(start + indexMarkerStart.length, max - indexMarkerEnd.length)
+    
+    let match;
+    while ((match = regex.exec(pars)) !== null) {
+      const key = match[1];
+      const value = match[2];
+      if (key in parameters) {
+        if (key === 'sortOrder' ) {
+          if ( sortOrders.includes(value)) {
+            parameters[key] = value;
+          }
+        } else {
+          parameters[key] = value;
+        }
+      }
+    }
+
+    const token_i = new state.Token('anaind_i', '', 0)
+    token_i.meta = { parameters }
+    state.tokens.push(token_i) 
     return false
   }
 
   md.inline.ruler.push('anaind_a', anchorRule);
-  md.block.ruler.before('fence', 'anaind_i', analyticalIndexRule);
+  // To check where to insert the analytical index.
+  md.block.ruler.before('fence', 'anaind_i', analyticalIndexRule, {
+    alt: ['paragraph', 'reference', 'blockquote']
+  });
 };

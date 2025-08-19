@@ -37,7 +37,7 @@ describe('analyticalIndex.txt', function () {
 })
 
 describe('custom docId in env', function () {
-  const md = markdownit().use(footnote)
+  const md = markdownit().use(analyticalIndex)
 
   // Now check that using `env.documentId` works to prefix IDs
   generate(fileURLToPath(new URL('fixtures/analyticalIndex-prefixed.txt', import.meta.url)), md, { docId: 'test-doc-id' })
