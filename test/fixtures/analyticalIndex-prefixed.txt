@@ -1,0 +1,7 @@
+
+A shorter and simplier test just to cover env.docId case.
+.
+!![symmetry] and !![contrast] are indexed terms.
+.
+<span id="symmetry-1">symmetry</span> and <span id="contrast-1">contrast</span> are indexed terms.
+.

@@ -1,0 +1,51 @@
+
+Analytical Index plugin test
+
+.
+!![symmetry] and !![contrast] are indexed terms. And this is another !![symmetry] description.
+This tag !![A should not be rendered neigther !!^[ this . And this !![] should be too short.
+Bye bye!!
+
+<!-- @analytical-index -->
+.
+<span id="symmetry-0">symmetry</span> and <span id="contrast-1">contrast</span> are indexed terms. And this is another <span id="symmetry-1">symmetry</span> description.
+This tag !![A should not be rendered neigther !!^[ this. And this !![] shouldbe too short.
+.
+
+
+
+Try the different parameters
+.
+!![symmetry] and !![contrast] are indexed terms. And this is another !![symmetry] description.
+This tag !![A should not be rendered neigther !!^[ this . And this !![] should be too short.
+Bye bye!!
+
+I forgot !![symmetry] another time.
+
+<!-- @analytical-index title:"My title", sortOrder:"frequency", headingLevel:"4", columns:"2" -->
+.
+<span id="symmetry-0">symmetry</span> and <span id="contrast-1">contrast</span> are indexed terms. And this is another <span id="symmetry-1">symmetry</span> description.
+This tag !![A should not be rendered neigther !!^[ this. And this !![] shouldbe too short.
+
+<h4>My title</h4>
+<p style="column-count: 2; column-gap: 20px;"><strong>Symmetry</strong> → <a href="#symmetry-2">2</a><br><strong>Contrast</strong> → <a href="#contrast-0">0</a><br></p>
+.
+
+
+
+Try without any words.
+.
+symmetry and contrast are indexed terms. And this is another symmetry description.
+This tag !![A should not be rendered neigther !!^[ this . And this !![] should be too short.
+Bye bye!!
+
+I forgot symmetry another time.
+
+<!-- @analytical-index title:"My title", sortOrder:"frequency", headingLevel:"4", columns:"2" -->
+.
+<span id="symmetry-0">symmetry</span> and <span id="contrast-1">contrast</span> are indexed terms. And this is another <span id="symmetry-1">symmetry</span> description.
+This tag !![A should not be rendered neigther !!^[ this. And this !![] shouldbe too short.
+
+<h4>My title</h4>
+<p style="column-count: 2; column-gap: 20px;"><strong>Symmetry</strong> → <a href="#symmetry-2">2</a><br><strong>Contrast</strong> → <a href="#contrast-0">0</a><br></p>
+.
