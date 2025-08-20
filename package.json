@@ -3,13 +3,22 @@
   "version": "0.2.0",
   "description": "Create automaticaly an analytical index in Markdown documents using markdown-it.",
   "homepage": "https://github.com/langworr/markdown-it-analytical-index",
-  "main": "index.mjs",
+  "main": "dist/analytical-index.umd.js",
+  "module": "dist/analytical-index.esm.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/analytical-index.esm.mjs",
+      "require": "./dist/analytical-index.umd.js"
+    }
+  },
   "type": "module",
   "scripts": {
-    "test": "npm run lint && npm run build && c8 --exclude dist --exclude test -r text -r html -r lcov mocha",
+    "test": "npm run lint && npm run build && c8 --exclude test -r text -r html -r lcov mocha",
     "prepublishOnly": "npm run lint && npm run build",
     "lint": "eslint .",
-    "build": "rollup -c"
+    "build:bundle": "rollup -c",
+    "build:ts": "tsc",
+    "build": "npm run build:ts && npm run build:bundle"
   },
   "keywords": [
     "markdown",
@@ -24,13 +33,18 @@
     "@eslint/js": "^9.32.0",
     "@eslint/markdown": "^7.1.0",
     "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.4",
+    "@types/markdown-it": "^14.1.2",
     "c8": "^10.1.3",
     "eslint": "^9.32.0",
     "globals": "^16.3.0",
     "markdown-it": "^14.1.0",
     "markdown-it-testgen": "^0.1.6",
-    "mocha": "^11.7.1"
+    "mocha": "^11.7.1",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.2"
   }
 }

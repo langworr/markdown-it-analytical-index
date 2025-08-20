@@ -1,8 +1,17 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
     "allowJs": true,
-    "target": "es5"
+    "checkJs": true,
+    "target": "es2020",
+    // "moduleResolution": "nodenext",
+    "module": "esnext",
+    "lib": ["ES2023", "DOM"], 
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "outDir": "dist",
   },
   "include": ["./src/**/*"]
 }

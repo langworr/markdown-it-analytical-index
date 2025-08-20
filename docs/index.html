@@ -6,8 +6,8 @@
     <title>Plugin Demonstration</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="https://cdn.jsdelivr.net/npm/markdown-it@12/dist/markdown-it.min.js"></script>
-    <script src="../dist/markdown-it-analytical-index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
+    <script src="../dist/analytical-index.umd.js"></script>
   </head>
   <body>
     <div class="main">
@@ -38,7 +38,7 @@ You can also write !![symmetry] in the middle of a sentence, like this: "This is
 You can asle wite about !![cakes] and !![cookies] in the same sentence.
 
 
-<!-- @analytical-index: title:"My index", sortOrder:"alphabetical", headingLevel:"4" -->
+<!-- @analytical-index title:"My index", sortOrder:"alphabetical", headingLevel:"4" -->
 
 </textarea>
         <div id="renderer" class="rendered"></div>
@@ -55,7 +55,7 @@ You can asle wite about !![cakes] and !![cookies] in the same sentence.
       function handleChange(e) {
         const text = window
           .markdownit({ html: true })
-          .use(window.markdownitAnalyticalIndex, {
+          .use(window.AnalyticalIndex, {
             title: "Index - Analytical",
             headingLevel: 4,
             sortOrder: "alphabetical"
