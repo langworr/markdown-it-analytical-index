@@ -6,7 +6,7 @@
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "test": "npm run lint && npm run build && c8 --exclude dist --exclude test -r text -r html -r lcov mocha",
+    "test": "npm run lint && npm run build && c8 --exclude dist --exclude test --check-coverage --branches 100 --functions 100 --lines 100 -r text -r html -r lcov mocha \"test/**/*.js\"",
     "prepublishOnly": "npm run lint && npm run build",
     "lint": "eslint .",
     "build": "rollup -c"

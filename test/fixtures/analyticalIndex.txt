@@ -8,8 +8,11 @@ Bye bye!!
 
 <!-- @analytical-index -->
 .
-<span id="symmetry-0">symmetry</span> and <span id="contrast-1">contrast</span> are indexed terms. And this is another <span id="symmetry-1">symmetry</span> description.
-This tag !![A should not be rendered neigther !!^[ this. And this !![] shouldbe too short.
+<p><span id="symmetry-symmetry-0">symmetry</span> and <span id="contrast-contrast-0">contrast</span> are indexed terms. And this is another <span id="symmetry-symmetry-1">symmetry</span> description.
+This tag !![A should not be rendered neigther !!^[ this . And this !![] should be too short.
+Bye bye!!</p>
+<h2>Analytical index</h2>
+<p><strong>Contrast</strong> → <a href="#contrast-0">1</a> <br><strong>Symmetry</strong> → <a href="#symmetry-0">1</a> <a href="#symmetry-1">2</a> <br></p><p>&lt;!-- @analytical-index --&gt;</p>
 .
 
 
@@ -24,11 +27,12 @@ I forgot !![symmetry] another time.
 
 <!-- @analytical-index title:"My title", sortOrder:"frequency", headingLevel:"4", columns:"2" -->
 .
-<span id="symmetry-0">symmetry</span> and <span id="contrast-1">contrast</span> are indexed terms. And this is another <span id="symmetry-1">symmetry</span> description.
-This tag !![A should not be rendered neigther !!^[ this. And this !![] shouldbe too short.
-
+<p><span id="symmetry-symmetry-0">symmetry</span> and <span id="contrast-contrast-0">contrast</span> are indexed terms. And this is another <span id="symmetry-symmetry-1">symmetry</span> description.
+This tag !![A should not be rendered neigther !!^[ this . And this !![] should be too short.
+Bye bye!!</p>
+<p>I forgot <span id="symmetry-symmetry-2">symmetry</span> another time.</p>
 <h4>My title</h4>
-<p style="column-count: 2; column-gap: 20px;"><strong>Symmetry</strong> → <a href="#symmetry-2">2</a><br><strong>Contrast</strong> → <a href="#contrast-0">0</a><br></p>
+<p style="column-count: 2; column-gap: 20px;"><strong>Symmetry</strong> → <a href="#symmetry-0">1</a> <a href="#symmetry-1">2</a> <a href="#symmetry-2">3</a> <br><strong>Contrast</strong> → <a href="#contrast-0">1</a> <br></p><p>&lt;!-- @analytical-index title:&quot;My title&quot;, sortOrder:&quot;frequency&quot;, headingLevel:&quot;4&quot;, columns:&quot;2&quot; --&gt;</p>
 .
 
 
@@ -43,9 +47,21 @@ I forgot symmetry another time.
 
 <!-- @analytical-index title:"My title", sortOrder:"frequency", headingLevel:"4", columns:"2" -->
 .
-<span id="symmetry-0">symmetry</span> and <span id="contrast-1">contrast</span> are indexed terms. And this is another <span id="symmetry-1">symmetry</span> description.
-This tag !![A should not be rendered neigther !!^[ this. And this !![] shouldbe too short.
-
+<p>symmetry and contrast are indexed terms. And this is another symmetry description.
+This tag !![A should not be rendered neigther !!^[ this . And this !![] should be too short.
+Bye bye!!</p>
+<p>I forgot symmetry another time.</p>
 <h4>My title</h4>
-<p style="column-count: 2; column-gap: 20px;"><strong>Symmetry</strong> → <a href="#symmetry-2">2</a><br><strong>Contrast</strong> → <a href="#contrast-0">0</a><br></p>
+<p style="column-count: 2; column-gap: 20px;"></p><p>&lt;!-- @analytical-index title:&quot;My title&quot;, sortOrder:&quot;frequency&quot;, headingLevel:&quot;4&quot;, columns:&quot;2&quot; --&gt;</p>
+.
+
+
+
+Questo testo non contiene termini indicizzati.
+
+<!-- @analytical-index -->
+.
+<p>Questo testo non contiene termini indicizzati.</p>
+<h4>My title</h4>
+<p style="column-count: 2; column-gap: 20px;"></p><p>&lt;!-- @analytical-index --&gt;</p>
 .

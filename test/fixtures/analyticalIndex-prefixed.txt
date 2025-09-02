@@ -3,5 +3,5 @@ A shorter and simplier test just to cover env.docId case.
 .
 !![symmetry] and !![contrast] are indexed terms.
 .
-<span id="symmetry-1">symmetry</span> and <span id="contrast-1">contrast</span> are indexed terms.
+<p><span id="-test-doc-id-symmetry-symmetry-0">symmetry</span> and <span id="-test-doc-id-contrast-contrast-0">contrast</span> are indexed terms.</p>
 .
