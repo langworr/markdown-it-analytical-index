@@ -1,5 +1,3 @@
-// src/index.ts
-
 import type MarkdownIt from 'markdown-it'
 import type { Options as MarkdownItOptions } from 'markdown-it'
 import type Renderer from 'markdown-it/lib/renderer.mjs'
