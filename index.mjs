@@ -22,13 +22,21 @@ function render_anaind_index(tokens, idx, options, env, slf) {
     Object.entries(env.anaind)
       .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // confronto alfabetico
       .forEach(([key, value]) => {
-        string += '<strong>' + capitalize(key) + '</strong> → <a href="#' + key + '-' + value + '">' + value + '</a><br>'
+        string += '<strong>' + capitalize(key) + '</strong> → '
+        value.forEach(id => { 
+          string += '<a href="#' + key + '-' + id + '">' + (id + 1) + '</a> '
+        })
+        string += '<br>'
       })
   } else if (tokens[idx].meta.parameters.sortOrder === 'frequency') {
     Object.entries(env.anaind)
-      .sort(([, keyA], [, keyB]) => keyB - keyA) // confronto numerico
+      .sort(([keyA], [keyB]) => keyB - keyA) // confronto numerico
       .forEach(([key, value]) => {
-        string += '<strong>' + capitalize(key) + '</strong> → <a href="#' + key + '-' + value + '">' + value + '</a><br>'
+        string += '<strong>' + capitalize(key) + '</strong> → '
+        value.forEach(id => { 
+          string += '<a href="#' + key + '-' + id + '">' + (id + 1) + '</a> '
+        })
+        string += '<br>'
       })
   }
 
@@ -94,11 +102,12 @@ export default function analyticalIndex (md, options) {
 
     // Check if the term already exists in the analytical index.
     // If it does, increment the term ID, otherwise set it to 0.
-    if (!(term in state.env.anaind)) state.env.anaind[term] = 0
-    else state.env.anaind[term] += 1
+    if (!state.env.anaind[term]) state.env.anaind[term] = []
+    const id = state.env.anaind[term].length
+    state.env.anaind[term].push(id)
 
     const token = state.push('anaind_a', 'span', 0)
-    token.attrs = [['id', `${term}-${state.env.anaind[term]}`]]
+    token.attrs = [['id', `${term}-${term}-${id}`]]
     token.content = term
 
     state.pos = labelEnd + 1
